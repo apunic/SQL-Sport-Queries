@@ -33,3 +33,40 @@ AND EXISTS (SELECT * FROM CICLISTA C WHERE C.nomeq=E.nomeq)
 Select Distinct M.color, M.codigo from Maillot M ,Ciclista C,llevar L where L.codigo= M.codigo and C.dorsal=L.dorsal and not exists(Select* from Ciclista C1,LLEVAR L1 where C.nomeq<>C1.nomeq and L1.dorsal=C1.dorsal and L1.codigo=M.codigo)
 Select distinct C.nomeq from ciclista C , puerto P where C.dorsal=P.dorsal and P.categoria='1'  and  not exists (Select * from Ciclista C1,Puerto P1 where C.nomeq= C1.nomeq and C1.dorsal=P1.dorsal and P1.categoria <>'1')
 
+Select P.netapa, Count (nompuerto) from puerto P group by p.netapa
+Select C.nomeq, count(nombre) from ciclista C group by C.nomeq order by nomeq
+Select E.nomeq, COUNT(C.nombre) from Equipo E LEFT JOIN ciclista C on E.nomeq = C.nomeq group by E.nomeq order by E.nomeq
+Select E.director, E.nomeq from Equipo E, Ciclista C where E.nomeq = C.nomeq group by E.Director ,E.nomeq having count(C.dorsal)>3 AND AVG(C.EDAD)<=30 order by E. Director
+SELECT C.nombre, count(T.dorsal) from Ciclista C, Etapa T  where C.dorsal=T.dorsal group by C.nombre ,C.nomeq having C.nomeq in (Select C.nomeq from ciclista C group by C.nomeq having count (C.dorsal) > 5 ) order by C.nombre
+
+
+select C1.nomeq, avg(C1.edad)
+from ciclista C1
+group by C1.nomeq
+having avg(C1.edad) = (
+    select max(A.average) 
+    from (
+        SELECT AVG(C2.edad) as average
+        FROM CICLISTA C2
+        GROUP BY C2.nomeq
+    ) A 
+)
+
+
+
+
+SELECT E.director
+FROM EQUIPO E JOIN CICLISTA C ON E.nomeq=C.nomeq JOIN LLEVAR L ON C.dorsal=L.dorsal
+GROUP BY E.director
+HAVING COUNT(L.dorsal) = (
+    select max(T.counting) 
+    from ( 
+        select count(L.dorsal) as counting 
+        from ciclista c
+        join llevar l on c.dorsal=l.dorsal
+        group by c.nomeq 
+    ) T
+)
+
+
+
