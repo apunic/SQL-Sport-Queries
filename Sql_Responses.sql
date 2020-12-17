@@ -68,5 +68,37 @@ HAVING COUNT(L.dorsal) = (
     ) T
 )
 
+Select distinct M.codigo, M.color from Maillot M, ciclista C ,llevar L where not exists(select C.dorsal from Etapa  E where C.dorsal=E.dorsal) and L.dorsal=C.dorsal and L.codigo=M.codigo
+Select E.netapa,E.llegada,E.salida from etapa E,puerto P where E.km> 190 and P.netapa=E.netapa group by E.netapa,E.llegada,E.salida having Count(P.dorsal)>=2
 
+SELECT C.dorsal, C.nombre
+FROM CICLISTA C left JOIN LLEVAR L ON C.dorsal=L.dorsal
+WHERE  EXISTS(SELECT *
+           FROM CICLISTA C1 JOIN LLEVAR L1 ON C1.DORSAL=L1.DORSAL
+           WHERE C1.DORSAL=20
+           AND L1.CODIGO NOT IN(SELECT L2.CODIGO FROM LLEVAR L2
+WHERE C.DORSAL = L2.DORSAL) )
+GROUP BY C.DORSAL, C.NOMBRE
+ORDER BY C.DORSAL
+
+Select C.dorsal, C.nombre from Ciclista C join Llevar L on C.dorsal=L.dorsal 
+where L.codigo in (Select L.codigo from LLevar L where L.dorsal =20) 
+and L.dorsal <> 20 
+group by C.dorsal ,C.nombre order by C.dorsal
+
+Select C.dorsal, C.nombre from Ciclista C join Llevar L on C.dorsal=L.DORSAL
+where not exists  (Select L.codigo from Llevar L where L.dorsal=20)
+and L.dorsal in (select <>20
+Group by C.dorsal, C.nombre order by C.dorsal
+
+SELECT C.dorsal, C.nombre
+ FROM CICLISTA C LEFT JOIN LLEVAR L ON L.dorsal=C.dorsal
+ WHERE NOT EXISTS (SELECT *
+                        FROM LLEVAR L
+                        WHERE L.dorsal=20
+                        AND L.codigo IN(SELECT L.codigo
+                                            FROM LLEVAR L
+                                            WHERE L.dorsal=C.dorsal))
+GROUP BY C.dorsal, C.nombre
+ORDER BY C.dorsal;
 
